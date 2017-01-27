@@ -24,8 +24,8 @@ The proper rebalance path depends on the purpose of the new data node.
 If you added a data node to expand the disk size of the cluster or increase
 write throughput, follow the steps in
 [Rebalance Procedure 1](#rebalance-procedure-1-rebalance-a-cluster-to-create-space).
-If you added a data node to increase data availability for queries, follow
-the steps in
+If you added a data node to increase data availability for queries and query
+throughput, follow the steps in
 [Rebalance Procedure 2](#rebalance-procedure-2-rebalance-a-cluster-to-increase-availability).
 
 ### Requirements
@@ -35,8 +35,7 @@ cluster, and they use the
 [`influx-ctl` tool](/enterprise/v1.2/features/cluster-commands/) available on
 all meta nodes.
 
-Before you begin, stop writing data to InfluxDB if you are writing
-historical data to the database.
+Before you begin, stop writing historical data to InfluxDB.
 Historical data are data with timestamps that occur in the past, that is, they're
 data that aren't real-time data.
 Performing a rebalance while writing historical data can lead to data loss.
@@ -51,8 +50,8 @@ This rebalance procedure is applicable for different cluster sizes and
 replication factors, but some of the specific, user-provided values will depend
 on that cluster size.
 
-Rebalance Procedure 1 focuses on how to rebalance a cluster to expand the disk
-size on the two original data nodes and increase the cluster's write throughput.
+Rebalance Procedure 1 focuses on how to rebalance a cluster after adding a
+data node to expand the total disk capacity of the cluster.
 In the next steps, you will safely move shards from one of the two original data
 nodes to the new data node.
 
@@ -128,6 +127,16 @@ data nodes to the new data node.
 Take note of the cold shard's `ID` (for example: `22`) and the TCP address of
 one of its owners in the `Owners` column (for example:
 `enterprise-data-01:8088`).
+
+> **Note:**
+>
+Use the following command string to determine the size of the shards in
+your cluster:
+>
+    find /var/lib/influxdb/data/ -mindepth 3 -type d -exec du -h {} \;
+>
+In general, we recommend moving TODO [the largest | the smallest] shards;
+TODO [because].
 
 ### Step 3: Copy Cold Shards
 
@@ -238,8 +247,8 @@ This rebalance procedure is applicable for different cluster sizes and
 replication factors, but some of the specific, user-provided values will depend
 on that cluster size.
 
-Rebalance Procedure 2 focuses on how to rebalance a cluster to increase data
-availability for queries.
+Rebalance Procedure 2 focuses on how to rebalance a cluster to improve availability
+and query throughput.
 In the next steps, you will increase the retention policy's replication factor and
 safely copy shards from one of the two original data nodes to the new data node.
 
@@ -401,4 +410,4 @@ Here's an example of the correct output for shard `22`:
 
 That's it.
 You've successfully rebalanced your cluster and increased data availability for
-queries.
+queries and query throughput.
